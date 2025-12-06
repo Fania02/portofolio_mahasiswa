@@ -12,7 +12,7 @@ def main_menu():
         print("=========================================")
         print(" SISTEM INFORMASI PORTOFOLIO MAHASISWA ")
         print("=========================================")
-        print("1. Login")
+        print("1. Login akun")
         print("2. Buat Akun (Sign Up)")
         print("3. Keluar")
         
