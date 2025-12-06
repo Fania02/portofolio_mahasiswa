@@ -3,6 +3,39 @@ from datetime import date
 from database import conn, cur
 from utils import pilih_file, is_file_valid, save_uploaded_file, open_file
 
+def menu_mahasiswa(user):
+    cur.execute("SELECT nim FROM Mahasiswa WHERE user_id=?", (user[0],))
+    nim = cur.fetchone()[0]
+    
+    while True:
+        print("\n=== MENU MAHASISWA ===")
+        print("1. Tambah Portofolio")
+        print("2. Lihat Portofolio Saya")
+        print("3. Edit Portofolio")
+        print("4. Hapus Portofolio")
+        print("5. Logout")
+        
+        choice = input("Pilih menu: ")
+        
+        if choice == "1":
+            tambah_portofolio(nim)
+        elif choice == "2":
+            lihat_portofolio_mahasiswa(nim)
+        elif choice == "3":
+            edit_portofolio(nim)
+        elif choice == "4":
+            pid = input("Masukkan ID portofolio yang ingin dihapus: ")
+            cur.execute("DELETE FROM Portofolio WHERE portofolio_id=? AND nim=?", (pid, nim))
+            cur.execute("DELETE FROM Bukti WHERE portofolio_id=?", (pid,))
+            cur.execute("DELETE FROM Verifikasi WHERE portofolio_id=?", (pid,))
+            conn.commit()
+            print("Portofolio dan data terkait dihapus!\n")
+        elif choice == "5":
+            print("Logout berhasil.\n")
+            return
+        else:
+            print("Pilihan tidak valid.\n")
+
 def tambah_portofolio(nim):
     print("\n=== TAMBAH PORTOFOLIO ===")
     jenis_dict = {"1": "Pendidikan", "2": "Organisasi", "3": "Prestasi", "4": "Proyek / Karya", "5": "Lain-lain"}
@@ -167,36 +200,3 @@ def edit_portofolio(nim):
     cur.execute("""UPDATE Verifikasi SET status = 'pending' WHERE portofolio_id = ?""", (pid,))
     conn.commit()
     print("Portofolio berhasil diperbarui! Status verifikasi direset menjadi PENDING.\n")
-
-def menu_mahasiswa(user):
-    cur.execute("SELECT nim FROM Mahasiswa WHERE user_id=?", (user[0],))
-    nim = cur.fetchone()[0]
-    
-    while True:
-        print("\n=== MENU MAHASISWA ===")
-        print("1. Tambah Portofolio")
-        print("2. Lihat Portofolio Saya")
-        print("3. Edit Portofolio")
-        print("4. Hapus Portofolio")
-        print("5. Logout")
-        
-        choice = input("Pilih menu: ")
-        
-        if choice == "1":
-            tambah_portofolio(nim)
-        elif choice == "2":
-            lihat_portofolio_mahasiswa(nim)
-        elif choice == "3":
-            edit_portofolio(nim)
-        elif choice == "4":
-            pid = input("Masukkan ID portofolio yang ingin dihapus: ")
-            cur.execute("DELETE FROM Portofolio WHERE portofolio_id=? AND nim=?", (pid, nim))
-            cur.execute("DELETE FROM Bukti WHERE portofolio_id=?", (pid,))
-            cur.execute("DELETE FROM Verifikasi WHERE portofolio_id=?", (pid,))
-            conn.commit()
-            print("Portofolio dan data terkait dihapus!\n")
-        elif choice == "5":
-            print("Logout berhasil.\n")
-            return
-        else:
-            print("Pilihan tidak valid.\n")

@@ -43,8 +43,10 @@ def register():
             email = input("Email: ")
             tanggal_lahir = input("Tanggal Lahir (YYYY-MM-DD): ")
             alamat = input("Alamat: ")
-            cur.execute("INSERT INTO Mahasiswa (nim,nama,email,user_id,tanggal_lahir,alamat) VALUES (?,?,?,?,?,?)", 
-                       (nim, nama, email, user_id, tanggal_lahir, alamat))
+            prodi = input("Prodi: ")
+            angkatan = input("Angkatan: ")
+            cur.execute("INSERT INTO Mahasiswa (nim,nama,email,user_id,tanggal_lahir,alamat,prodi,angkatan) VALUES (?,?,?,?,?,?,?,?)", 
+                       (nim, nama, email, user_id, tanggal_lahir, alamat, prodi, angkatan))
         elif role == "dosen":
             nama = input("Nama dosen: ")
             email = input("Email: ")

@@ -18,12 +18,14 @@ def init_database():
     )""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Mahasiswa (
+        user_id INTEGER UNIQUE NOT NULL, 
         nim TEXT PRIMARY KEY, 
         nama TEXT NOT NULL, 
         tanggal_lahir TEXT, 
         alamat TEXT, 
         email TEXT UNIQUE, 
-        user_id INTEGER UNIQUE NOT NULL, 
+        prodi TEXT,
+        angkatan TEXT,
         FOREIGN KEY(user_id) REFERENCES Users(user_id)
     )""")
 
@@ -68,7 +70,7 @@ def seed_data():
     cur.execute("SELECT * FROM Users")
     if not cur.fetchall():
         cur.execute("INSERT INTO Users (username,password,role) VALUES ('salsa','salsa123','mahasiswa')")
-        cur.execute("INSERT INTO Mahasiswa (nim,nama,email,user_id,tanggal_lahir,alamat) VALUES ('K3524036','Salsabila Khoiriyatin','salsa@example.com',1,'2000-01-01','Surakarta')")
+        cur.execute("INSERT INTO Mahasiswa (nim,nama,email,user_id,tanggal_lahir,alamat,prodi,angkatan) VALUES ('K3524036','Salsabila Khoiriyatin','salsa@example.com',1,'2000-01-01','Surakarta','PTIK','2024')")
         cur.execute("INSERT INTO Users (username,password,role) VALUES ('dosen1','dosen123','dosen')")
         cur.execute("INSERT INTO Dosen (nama,email,user_id) VALUES ('Pak Dosen','dosen@example.com',2)")
         cur.execute("INSERT INTO Users (username,password,role) VALUES ('admin','superadmin1','admin')")
@@ -91,6 +93,34 @@ def clear_all_data():
     seed_data()
     print("Akun awal berhasil dibuat ulang.")
     print("-----------------------------------------\n")
+
+def user_delete():
+    print("\n MEMULAI DELETE USER")
+    username = input("Masukkan Username yang ingin dihapus: ")
+
+    cur.execute("SELECT * FROM Users WHERE username=?", (username,))
+    user = cur.fetchone()
+
+    if user is None:
+        print("Username tidak ditemukan!")
+        return
+    
+    if user[3] == "admin":
+        print("Akun admin tidak boleh dihapus!")
+        return
+
+    confirm = input(f"Apakah Anda yakin ingin menghapus user '{username}'? (ketik YA untuk konfirmasi): ")
+    if confirm.upper() != "YA":
+        print("Penghapusan dibatalkan.")
+        return
+
+    cur.execute("DELETE FROM Mahasiswa WHERE user_id=?", (user[0],))
+    cur.execute("DELETE FROM Dosen WHERE user_id=?", (user[0],))
+
+    cur.execute("DELETE FROM Users WHERE username=?", (username,))
+    conn.commit()
+
+    print(f"User '{username}' beserta relasi datanya berhasil dihapus!\n")
 
 def tampilkan_semua_tabel_sql():
     tabel_list = ['Users', 'Mahasiswa', 'Dosen', 'Portofolio', 'Bukti', 'Verifikasi']
