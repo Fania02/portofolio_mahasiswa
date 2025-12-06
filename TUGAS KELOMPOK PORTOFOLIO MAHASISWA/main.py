@@ -16,7 +16,7 @@ def main_menu():
         print("2. Buat Akun (Sign Up)")
         print("3. Keluar")
         
-        choice = input("Pilih menu: ")
+        choice = input("Pilih Menu Utama: ")
 
         if choice == "1":
             user = login()
